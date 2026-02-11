@@ -1,0 +1,39 @@
+# Dependencies
+recomienda_ai/log/
+recomienda_ai/tmp/
+recomienda_ai/node_modules/
+recomienda_ai_frontend/node_modules/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs
+recomienda_ai_frontend/dist/
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Rails
+recomienda_ai/public/assets/
+recomienda_ai/public/packs/
+recomienda_ai/.byebug_history
+
+# Test coverage
+/coverage/
