@@ -129,3 +129,18 @@ export function useDeleteRating() {
     },
   })
 }
+
+export function useMovieImage(title: string) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["movieImage", title],
+    queryFn: async () => {
+      const response = await fetch(`https://imdb.iamidiotareyoutoo.com/search?q=${encodeURIComponent(title)}`)
+      const data = await response.json()
+      return data?.description?.[0]?.["#IMG_POSTER"] || null
+    },
+    enabled: !!title,
+    staleTime: Infinity,
+  })
+
+  return { imageUrl: data, isLoading, error }
+}

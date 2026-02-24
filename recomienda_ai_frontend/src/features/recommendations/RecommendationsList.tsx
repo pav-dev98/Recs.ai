@@ -1,7 +1,46 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card"
 import { Button } from "../../components/ui/button"
-import { useRecommendations, useGenerateRecommendations, useAddFavorite } from "../../hooks/useApi"
+import { useRecommendations, useGenerateRecommendations, useAddFavorite, useMovieImage } from "../../hooks/useApi"
 import type { Recommendation } from "../../types"
+
+function MovieCard({ item, onFavorite }: { item: any; onFavorite: (id: string) => void }) {
+  const { imageUrl, isLoading } = useMovieImage(item.title)
+
+  return (
+    <Card className="overflow-hidden">
+      {imageUrl ? (
+        <img src={imageUrl} alt={item.title} className="w-full h-64 object-cover" />
+      ) : (
+        <div className="w-full h-64 bg-muted flex items-center justify-center">
+          {isLoading ? (
+            <span className="text-muted-foreground">Loading...</span>
+          ) : (
+            <span className="text-muted-foreground">No image</span>
+          )}
+        </div>
+      )}
+      <CardHeader>
+        <CardTitle className="text-lg">{item.title}</CardTitle>
+        <CardDescription>
+          {item.release_year} • {item.directors?.join(", ") || "Unknown Director"}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground mb-3">{item.description}</p>
+        <div className="flex flex-wrap gap-1 mb-3">
+          {item.genres.map((genre: string) => (
+            <span key={genre} className="px-2 py-1 bg-secondary text-secondary-foreground rounded-full text-xs">
+              {genre}
+            </span>
+          ))}
+        </div>
+        <Button variant="outline" className="w-full" onClick={() => onFavorite(item.id)}>
+          Add to Favorites
+        </Button>
+      </CardContent>
+    </Card>
+  )
+}
 
 export function RecommendationsList() {
   const { recommendations, isLoading, error, refetch } = useRecommendations()
@@ -27,7 +66,7 @@ export function RecommendationsList() {
       alert("Failed to add to favorites")
     }
   }
-  
+
   console.log("Recommendations:", recs);
 
   if (isLoading) {
@@ -83,41 +122,9 @@ export function RecommendationsList() {
       {recs.movies && recs.movies.length > 0 && (
         <div>
           <h3 className="text-xl font-semibold mb-4">Movies</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {recs.movies.map((item,index) => (
-              <Card key={index} className="overflow-hidden">
-                <img
-                  src={"https://placehold.co/300x450"}
-                  alt={item.title}
-                  className="w-full h-48 object-cover"
-                />
-                <CardHeader>
-                  <CardTitle className="text-lg">{item.title}</CardTitle>
-                  <CardDescription>
-                    {item.release_year} • {item.directors?.join(", ") || "Unknown Director"}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-3">{item.description}</p>
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {item.genres.map((genre) => (
-                      <span
-                        key={genre}
-                        className="px-2 py-1 bg-secondary text-secondary-foreground rounded-full text-xs"
-                      >
-                        {genre}
-                      </span>
-                    ))}
-                  </div>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => handleFavorite(item.id)}
-                  >
-                    Add to Favorites
-                  </Button>
-                </CardContent>
-              </Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {recs.movies.map((item, index) => (
+              <MovieCard key={index} item={item} onFavorite={handleFavorite} />
             ))}
           </div>
         </div>
@@ -126,14 +133,12 @@ export function RecommendationsList() {
       {recs.books && recs.books.length > 0 && (
         <div>
           <h3 className="text-xl font-semibold mb-4">Books</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {recs.books.map((item,index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {recs.books.map((item, index) => (
               <Card key={index} className="overflow-hidden">
-                <img
-                  src={"https://placehold.co/300x450"}
-                  alt={item.title}
-                  className="w-full h-48 object-cover"
-                />
+                <div className="w-full h-64 bg-muted flex items-center justify-center">
+                  <span className="text-muted-foreground">No image</span>
+                </div>
                 <CardHeader>
                   <CardTitle className="text-lg">{item.title}</CardTitle>
                   <CardDescription>
